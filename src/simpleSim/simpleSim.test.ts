@@ -1,8 +1,8 @@
-import { runSimpleSim } from "./simpleSim"
+import { simpleSimulation } from "./simpleSim"
 
 describe("simpleSim", () => {
   it(`produces a list of virus counts, that is growing and smaller than maxPop`, () => {
-    const listOfVirusCounts = runSimpleSim({
+    const listOfVirusCounts = simpleSimulation({
       virusCount: 100,
       birthProb: 0.1,
       clearProb: 0.05,

@@ -9,33 +9,29 @@ type simpleSimArgs = {
   maxPop: number
   repetitions: number
 }
-type mapFn = {
-  (patient: patient): [patient, number]
-}
 
-function simpleSimulation(
-  mapFunction: mapFn,
-  { virusCount, birthProb, clearProb, maxPop, repetitions }: simpleSimArgs
-): number[] {
+export function simpleSimulation({
+  virusCount,
+  birthProb,
+  clearProb,
+  maxPop,
+  repetitions,
+}: simpleSimArgs): number[] {
+  function updatePatientGetVirusCount(patient: patient): [patient, number] {
+    return [patient.updatePatient(), patient.getVirusCount()]
+  }
+
   const viruses = createVirusPopulation({ virusCount, birthProb, clearProb })
   const patient = createPatient(viruses, maxPop)
-  const emptyList = [...Array(repetitions)]
+  const listOfUndefined = [...Array(repetitions)]
   // mapAccum is like a combination of map and reduce.
-  // It applies a function (mapPatient) to each item in the empty list
-  // passing an accumulating parameter (the patient)
-  // to each iteration. Returns a tuple of the final state of
-  // the accumulator (the patient) and an array of virus counts.
-  const [, virusCounts] = mapAccum(mapFunction, patient, emptyList)
+  // The accumulating parameter part is the patient object and the function is patient.update()
+  // The map function (mapPatient) records the virus counts to the empty list by calling patient.getVirusCount()
+  // Returns a tuple of the final state of the patient and the array of virus counts.
+  const [, virusCounts] = mapAccum(
+    updatePatientGetVirusCount,
+    patient,
+    listOfUndefined
+  )
   return virusCounts
 }
-
-// curry the simpleSim function so that the mapFunction
-// can be applied before the rest of the parameters
-const curriedSimulation = curry(simpleSimulation)
-// for each iteration update the patient
-// and write the virus count to the list
-function mapPatientToVirusCount(patient: patient): [patient, number] {
-  return [patient.updatePatient(), patient.getVirusCount()]
-}
-
-export const runSimpleSim = curriedSimulation(mapPatientToVirusCount)
