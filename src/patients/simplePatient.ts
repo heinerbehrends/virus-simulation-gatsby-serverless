@@ -18,7 +18,7 @@ export function createPatient(viruses: simpleVirus[], maxPop: number): patient {
     return viruses
   }
   // gets called by the simple simulation
-  function updatePatient() {
+  function update() {
     // filter the viruses that die
     const survivingViruses = viruses.filter(virus => virus.doesSurvive())
     // calculate the population density of the surviving viruses
@@ -37,6 +37,6 @@ export function createPatient(viruses: simpleVirus[], maxPop: number): patient {
     getPopDensity,
     getVirusCount,
     getViruses,
-    updatePatient,
+    updatePatient: update,
   })
 }
